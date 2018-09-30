@@ -25,8 +25,8 @@ struct BinaryTree
             {
                 if((*temp) -> data == number) return true;
                 else if ((*temp) -> data > number)
-                    temp = &((*temp) -> right);
-                else temp = &((*temp) -> left);
+                    temp = &((*temp) -> left);
+                else temp = &((*temp) -> right);
             }
         }
     return false;
@@ -77,6 +77,21 @@ struct BinaryTree
         }
     }
 
+    void print()
+    {
+        if (nodes)
+        {
+            Iterator inicio = begin();
+            while(inicio != finish())
+            {
+                cout << *inicio << " ";
+                ++inicio;
+            }
+        }
+        else
+            cout << "No hay nodos." << endl;
+    }
+
     Iterator begin()
     {
         Node* temp = new Node(root);
@@ -95,6 +110,8 @@ struct BinaryTree
     {
         return Iterator(nullptr);
     }
+
+    ~BinaryTree(){root ->killSelf();}
 
 };
 
