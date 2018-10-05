@@ -22,6 +22,7 @@ struct Iterator
     {
         stackTree = node.stackTree;
         current = node.current;
+        // No estás retornando nada
     }
 
     bool operator!=(Iterator node)

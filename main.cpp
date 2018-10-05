@@ -1,23 +1,102 @@
-#include "binarytree.h"
 #include <iostream>
+#include <algorithm>    
+#include <vector>
+#include <random>
+#include <assert.h>
+
+#include "binarytree.h"
 
 using namespace std;
 
-int main()
-{
-    BinaryTree BeepBoop;
+#define RANGE_MIN 100
+#define RANGE_MAX 500
+#define MIN_NUMBER 0
+#define MAX_NUMBER 500
 
-    BeepBoop. print();
+mt19937 rng;
+vector<int> helper;
 
-    BeepBoop.insert(1);
-    BeepBoop.insert(4);
-    BeepBoop.insert(5);
-    BeepBoop.insert(3);
-    BeepBoop.insert(2);
+int generateRandomInt(int min, int max);
+void insertIntoTree(BinaryTree &tester);
+void removeFromTree(BinaryTree &tester);
+void sortAndPruneHelper();
+bool testTreeCompletion(BinaryTree* tester);
+void print(BinaryTree* tester);
 
-    BeepBoop.eliminate(2);
-    BeepBoop.eliminate(3);
+int main(int argc, char *argv[]) {
+    rng.seed(random_device()());
+    cout << "===========================================================" << endl;
+    cout << "\tBinary Tree Practice" << endl;
+    cout << "===========================================================" << endl << endl;
 
-    BeepBoop.print();
-    return 0;
+    BinaryTree tester;
+    const int numberOfElements = generateRandomInt(RANGE_MIN, RANGE_MAX);
+    for (int i = 0; i < numberOfElements; i++) {
+        insertIntoTree(tester);
+    }
+    sortAndPruneHelper();
+
+    // Falta la función del peso
+    //assert(tester.getWeight() == helper.size() && "Something is wrong with the insert or weight method");
+
+    assert(testTreeCompletion(&tester) && "Something is wrong with the insert method or the iterator");
+
+    const int elementsToRemove = generateRandomInt(0, helper.size() - 1);
+    for (int i = 0; i < elementsToRemove; i++) {
+        removeFromTree(tester);
+    }
+
+    // Tu remove está fallando
+    assert(testTreeCompletion(&tester) && "Something is wrong with the remove method or the iterator");
+
+    print(&tester);
+
+    return EXIT_SUCCESS;
+}
+
+int generateRandomInt(int min, int max) {
+    uniform_int_distribution<mt19937::result_type> distribution(min, max);
+    return distribution(rng);
+}
+
+void insertIntoTree(BinaryTree &tester) {
+    const int numberToInsert = generateRandomInt(MIN_NUMBER, MAX_NUMBER);
+    helper.push_back(numberToInsert);
+    tester.insert(numberToInsert);
+}
+
+void removeFromTree(BinaryTree &tester) {
+    const int positionToRemove = generateRandomInt(0, helper.size() - 1);
+    const int element = helper.at(positionToRemove);
+    helper.erase(helper.begin() + positionToRemove);
+    tester.eliminate(element);
+}
+
+void sortAndPruneHelper() {
+    sort(helper.begin(), helper.end());
+    auto last = std::unique(helper.begin(), helper.end());
+    helper.erase(last, helper.end()); 
+}
+
+bool testTreeCompletion(BinaryTree* tester) {
+    int i = 0;
+    for (Iterator it = tester->begin(); it != tester->finish(); ++it) {
+        if (*it != helper.at(i)) {
+            return false;
+        }
+        i++;
+    }
+    return true;
+}
+
+void print(BinaryTree* tester) {
+    for (Iterator it = tester->begin(); it != tester->finish(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl << endl;
+
+    for (int i = 0; i < helper.size(); i++) {
+        cout << helper.at(i) << " ";
+    }
+    cout << endl;
 }
